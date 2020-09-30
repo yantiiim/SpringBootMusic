@@ -148,6 +148,13 @@ public class KoneksiJdbc {
         }
     }
     
+    public void deleteArtis(Integer id){
+        String SQL = "delete from artis where id_artis=?";
+        Object parameters[] = {id};
+        
+        jdbcTemplate.update(SQL, parameters);
+    }
+    
     //Data Table Artis
     public Integer getBanyakArtis(DataTablesRequest req) {
         String query = "SELECT count(id_artis) as banyak FROM artis";
@@ -321,6 +328,13 @@ public class KoneksiJdbc {
         });
     }
     
+    public void deleteAlbums(Integer id){
+        String SQL = "delete from albums where id_album=?";
+        Object parameters[] = {id};
+        
+        jdbcTemplate.update(SQL, parameters);
+    }
+    
     //Data Table Albums
     public Integer getBanyakAlbums(DataTablesRequest req) {
         String query = "SELECT count(id_album) as banyak FROM albums";
@@ -454,6 +468,13 @@ public class KoneksiJdbc {
             lagu.setFileLagu(rs.getString("fileLagu"));
             return lagu;
         });
+    }
+    
+    public void deleteLagu(Integer id){
+        String SQL = "delete from lagu where id_lagu=?";
+        Object parameters[] = {id};
+        
+        jdbcTemplate.update(SQL, parameters);
     }
     
     //Data Table Lagu

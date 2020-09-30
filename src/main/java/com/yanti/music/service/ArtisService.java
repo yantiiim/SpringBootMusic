@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,6 +45,10 @@ public class ArtisService {
             dataTableRespon.setDraw(req.getDraw());
             return dataTableRespon;
         }
+        
+    public void deleteById(Integer id) throws DataAccessException{
+        koneksiJdbc.deleteArtis(id);
+    }
         
     public String save(MultipartFile file) {
         try {
