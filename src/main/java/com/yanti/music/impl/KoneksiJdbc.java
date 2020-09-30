@@ -75,6 +75,36 @@ public class KoneksiJdbc {
         }
     }
     
+    //Data Table Lables
+    public Integer getBanyakLablesRekaman(DataTablesRequest req) {
+        String query = "SELECT count(id_label) as banyak FROM lables_rekaman";
+        if(!req.getExtraParam().isEmpty()){
+            String nama_labels = (String) req.getExtraParam().get("namaLabels");
+            query = " SELECT count(id_label) as banyak FROM lables_rekaman where nama_labels like concat('%',?,'%')";
+            return jdbcTemplate.queryForObject(query, Integer.class, nama_labels);
+        }else{
+            return this.jdbcTemplate.queryForObject(query, null, Integer.class);
+        }
+        
+    }
+    
+    public List<LablesRekaman> getListLablesRekaman(DataTablesRequest req) {
+        String SQL = "SELECT id_label as idLabel, nama_labels as namaLabels, alamat, no_telp as noTelp, "
+                + "contact_person as contactPerson, url_website as urlWebsite FROM lables_rekaman "
+                + "order by "+(req.getSortCol()+1)+"  "+req.getSortDir() +" limit ? offset ?";
+        if(!req.getExtraParam().isEmpty()){
+            String namaLabels = (String) req.getExtraParam().get("namaLabels");
+            SQL = "SELECT id_label as idLabel, nama_labels as namaLabels, alamat, no_telp as noTelp, "
+                + "contact_person as contactPerson, url_website as urlWebsite FROM lables_rekaman "
+                + "where nama_labels like concat('%',?,'%')"
+                + " order by "+(req.getSortCol()+1)+"  "+req.getSortDir() +" limit ? offset ?";
+            return jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(LablesRekaman.class), namaLabels, req.getLength(), req.getStart());
+        }else{
+            return jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(LablesRekaman.class), req.getLength(), req.getStart());
+        }
+        
+    }
+    
     //Artis
     public List<Artis> getArtis(){
         
@@ -118,6 +148,36 @@ public class KoneksiJdbc {
         }
     }
     
+    //Data Table Artis
+    public Integer getBanyakArtis(DataTablesRequest req) {
+        String query = "SELECT count(id_artis) as banyak FROM artis";
+        if(!req.getExtraParam().isEmpty()){
+            String nama_artis = (String) req.getExtraParam().get("namaArtis");
+            query = " SELECT count(id_artis) as banyak FROM artis where nama_artis like concat('%',?,'%')";
+            return jdbcTemplate.queryForObject(query, Integer.class, nama_artis);
+        }else{
+            return this.jdbcTemplate.queryForObject(query, null, Integer.class);
+        }
+        
+    }
+    
+    public List<Artis> getListArtis(DataTablesRequest req) {
+        String SQL = "SELECT id_artis as idArtis, nama_artis as namaArtis, foto, url_website as urlWebsite, "
+                + "keterangan FROM artis "
+                + "order by "+(req.getSortCol()+1)+"  "+req.getSortDir() +" limit ? offset ?";
+        if(!req.getExtraParam().isEmpty()){
+            String namaArtis = (String) req.getExtraParam().get("namaArtis");
+            SQL = "SELECT id_artis as idArtis, nama_artis as namaArtis, foto, url_website as urlWebsite, "
+                + "keterangan FROM artis "
+                + "where nama_artis like concat('%',?,'%')"
+                + " order by "+(req.getSortCol()+1)+"  "+req.getSortDir() +" limit ? offset ?";
+            return jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(Artis.class), namaArtis, req.getLength(), req.getStart());
+        }else{
+            return jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(Artis.class), req.getLength(), req.getStart());
+        }
+        
+    }
+    
     //Genre
     public List<Genre> getGenre(){
         
@@ -157,24 +217,58 @@ public class KoneksiJdbc {
         }
     }
     
+    public void deleteGenre(Integer id){
+        String SQL = "delete from genre where id_genre=?";
+        Object parameters[] = {id};
+        
+        jdbcTemplate.update(SQL, parameters);
+    }
+    
+    //Data Table Genre
+    public Integer getBanyakGenre(DataTablesRequest req) {
+        String query = "SELECT count(id_genre) as banyak FROM genre";
+        if(!req.getExtraParam().isEmpty()){
+            String nama_genre = (String) req.getExtraParam().get("namaGenre");
+            query = " SELECT count(id_genre) as banyak FROM genre where nama_genre like concat('%',?,'%')";
+            return jdbcTemplate.queryForObject(query, Integer.class, nama_genre);
+        }else{
+            return this.jdbcTemplate.queryForObject(query, null, Integer.class);
+        }
+        
+    }
+    
+    public List<Genre> getListGenre(DataTablesRequest req) {
+        String SQL = "SELECT id_genre as idGenre, nama_genre as namaGenre FROM genre "
+                + "order by "+(req.getSortCol()+1)+"  "+req.getSortDir() +" limit ? offset ?";
+        if(!req.getExtraParam().isEmpty()){
+            String namaGenre = (String) req.getExtraParam().get("namaGenre");
+            SQL = "SELECT id_genre as idGenre, nama_genre as namaGenre FROM genre "
+                + "where nama_genre like concat('%',?,'%')"
+                + " order by "+(req.getSortCol()+1)+"  "+req.getSortDir() +" limit ? offset ?";
+            return jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(Genre.class), namaGenre, req.getLength(), req.getStart());
+        }else{
+            return jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(Genre.class), req.getLength(), req.getStart());
+        }
+        
+    }
+    
     //Albums
     public List<Albums> getAlbums(){
-        
-        String SQL = "select al.id_album as idAlbum, al.nama_albums as namaAlbums,\n "
-                    + "al.id_labels as idLabel, al.id_artis as idArtis, al.foto_cover as fotoCover, "
-                    + "al.keterangan, ar.id_artis as idArtis, \n "
-                    + "lab.id_label as idLabel from Albums al join Artis ar on \n "
-                    + "al.id_artis = ar.id_artis join lables_rekaman lab on al.id_labels = lab.id_label";
-        List<Albums> albm = jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(Albums.class));
-        return albm;
+        String SQL = "select al.id_album as idAlbum, al.nama_albums as namaAlbums, "
+                + "al.id_labels as idLabel, al.id_artis as idArtis, al.foto_cover as fotoCover, "
+                + "al.keterangan, ar.nama_artis as namaArtis, la.nama_labels as namaLabels "
+                + "from Albums al join Artis ar on al.id_artis = ar.id_artis "
+                + "join lables_rekaman la on al.id_labels = la.id_label";
+        List<Albums> al = jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(Albums.class));
+        return al;
     }
     
     public Optional<Albums> getAlbumsById(int id){
-        String SQL = "select al.id_album as idAlbum, al.nama_albums as namaAlbums,\n "
-                    + "al.id_labels as idLabel, al.id_artis as idArtis, al.foto_cover as fotoCover, "
-                    + "al.keterangan, ar.id_artis as idArtis, \n "
-                    + "lab.id_label as idLabel from Albums al join Artis ar on \n "
-                    + "al.id_artis = ar.id_artis join lables_rekaman lab on al.id_labels = lab.id_label where id_album = ?";
+        String SQL = "select al.id_album as idAlbum, al.nama_albums as namaAlbums, "
+                + "al.id_labels as idLabel, al.id_artis as idArtis, al.foto_cover as fotoCover, "
+                + "al.keterangan, ar.nama_artis as namaArtis, la.nama_labels as namaLabels "
+                + "from Albums al join Artis ar on al.id_artis = ar.id_artis "
+                + "join lables_rekaman la on al.id_labels = la.id_label where id_album = ?";
         Object param[] = {id};
         try {
             return Optional.of (jdbcTemplate.queryForObject(SQL, param, BeanPropertyRowMapper.newInstance(Albums.class)));
@@ -204,6 +298,63 @@ public class KoneksiJdbc {
         }else{
             insertAlbums(albums);
         }
+    }
+    
+    public List<Albums> getAlbumsByArtis(int id) {
+
+        String baseQuery = "select al.id_album as idAlbum, al.nama_albums as namaAlbums," +
+                " al.id_labels as idLabel, al.id_artis as idArtis, al.foto_cover as fotoCover, al.keterangan, ar.nama_artis as namaArtis from Albums al join Artis ar on " +
+                "al.id_artis = ar.id_artis where al.id_artis = ? ";
+
+        Object[] param = {id};
+
+        return jdbcTemplate.query(baseQuery, param, (rs, rowNUm) -> {
+            Albums albums = new Albums();
+            albums.setIdAlbum(rs.getInt("idAlbum"));
+            albums.setNamaAlbums(rs.getString("namaAlbums"));
+            albums.setIdLabel(rs.getInt("idLabel"));
+            albums.setIdArtis(rs.getInt("idArtis"));
+            albums.setFotoCover(rs.getString("fotoCover"));
+            albums.setKeterangan(rs.getString("keterangan"));
+            albums.setNamaArtis(rs.getString("namaArtis"));
+            return albums;
+        });
+    }
+    
+    //Data Table Albums
+    public Integer getBanyakAlbums(DataTablesRequest req) {
+        String query = "SELECT count(id_album) as banyak FROM albums";
+        if(!req.getExtraParam().isEmpty()){
+            String nama_albums = (String) req.getExtraParam().get("namaAlbums");
+            query = " SELECT count(id_album) as banyak FROM albums where nama_albums like concat('%',?,'%')";
+            return jdbcTemplate.queryForObject(query, Integer.class, nama_albums);
+        }else{
+            return this.jdbcTemplate.queryForObject(query, null, Integer.class);
+        }
+        
+    }
+    
+    public List<Albums> getListAlbums(DataTablesRequest req) {
+        String SQL = "select al.id_album as idAlbum, al.nama_albums as namaAlbums, "
+                + "al.id_labels as idLabel, al.id_artis as idArtis, al.foto_cover as fotoCover, "
+                + "al.keterangan, ar.nama_artis as namaArtis, la.nama_labels as namaLabels "
+                + "from Albums al join Artis ar on al.id_artis = ar.id_artis "
+                + "join lables_rekaman la on al.id_labels = la.id_label "
+                    + "order by "+(req.getSortCol()+1)+"  "+req.getSortDir() +" limit ? offset ?";
+        if(!req.getExtraParam().isEmpty()){
+            String namaAlbums = (String) req.getExtraParam().get("namaAlbums");
+            SQL = "select al.id_album as idAlbum, al.nama_albums as namaAlbums, "
+                + "al.id_labels as idLabel, al.id_artis as idArtis, al.foto_cover as fotoCover, "
+                + "al.keterangan, ar.nama_artis as namaArtis, la.nama_labels as namaLabels "
+                + "from Albums al join Artis ar on al.id_artis = ar.id_artis "
+                + "join lables_rekaman la on al.id_labels = la.id_label "
+                    + "where nama_albums like concat('%',?,'%')"
+                    + " order by "+(req.getSortCol()+1)+"  "+req.getSortDir() +" limit ? offset ?";
+            return jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(Albums.class), namaAlbums, req.getLength(), req.getStart());
+        }else{
+            return jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(Albums.class), req.getLength(), req.getStart());
+        }
+        
     }
     
     //Lagu
@@ -252,128 +403,57 @@ public class KoneksiJdbc {
         }
     }
     
-    //Data Table Lables
-    public Integer getBanyakLablesRekaman(DataTablesRequest req) {
-        String query = "SELECT count(id_label) as banyak FROM lables_rekaman";
-        if(!req.getExtraParam().isEmpty()){
-            String nama_labels = (String) req.getExtraParam().get("namaLabels");
-            query = " SELECT count(id_label) as banyak FROM lables_rekaman where nama_labels like concat('%',?,'%')";
-            return jdbcTemplate.queryForObject(query, Integer.class, nama_labels);
-        }else{
-            return this.jdbcTemplate.queryForObject(query, null, Integer.class);
-        }
-        
+    public List<Lagu> getLaguByAlbums(int id) {
+
+        String baseQuery = "select la.id_lagu as idLagu, la.judul, la.durasi, la.id_genre as idGenre, "
+                + "la.id_artis as idArtis, la.id_album as idAlbum, la.file_lagu as fileLagu, "
+                + "g.nama_genre as namaGenre, ar.nama_artis as namaArtis, al.nama_albums as namaAlbums "
+                + "from lagu la join genre g on la.id_genre = g.id_genre join artis ar on la.id_artis = ar.id_artis "
+                + "join albums al on la.id_album = al.id_album  where al.id_artis = ?";
+
+        Object[] param = {id};
+
+        return jdbcTemplate.query(baseQuery, param, (rs, rowNUm) -> {
+            Lagu lagu = new Lagu();
+            lagu.setIdLagu(rs.getInt("idLagu"));
+            lagu.setJudul(rs.getString("judul"));
+            lagu.setDurasi(rs.getString("durasi"));
+            lagu.setIdGenre(rs.getInt("idGenre"));
+            lagu.setIdArtis(rs.getInt("idArtis"));
+            lagu.setIdAlbum(rs.getInt("idAlbum"));
+            lagu.setFileLagu(rs.getString("fileLagu"));
+            lagu.setNamaGenre(rs.getString("namaGenre"));
+            lagu.setNamaArtis(rs.getString("namaArtis"));
+            lagu.setNamaAlbums(rs.getString("namaAlbums"));
+            return lagu;
+        });
     }
     
-    public List<LablesRekaman> getListLablesRekaman(DataTablesRequest req) {
-        String SQL = "SELECT id_label as idLabel, nama_labels as namaLabels, alamat, no_telp as noTelp, "
-                + "contact_person as contactPerson, url_website as urlWebsite FROM lables_rekaman "
-                + "order by "+(req.getSortCol()+1)+"  "+req.getSortDir() +" limit ? offset ?";
-        if(!req.getExtraParam().isEmpty()){
-            String namaLabels = (String) req.getExtraParam().get("namaLabels");
-            SQL = "SELECT id_label as idLabel, nama_labels as namaLabels, alamat, no_telp as noTelp, "
-                + "contact_person as contactPerson, url_website as urlWebsite FROM lables_rekaman "
-                + "where nama_labels like concat('%',?,'%')"
-                + " order by "+(req.getSortCol()+1)+"  "+req.getSortDir() +" limit ? offset ?";
-            return jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(LablesRekaman.class), namaLabels, req.getLength(), req.getStart());
-        }else{
-            return jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(LablesRekaman.class), req.getLength(), req.getStart());
-        }
-        
-    }
-    
-    //Data Table Artis
-    public Integer getBanyakArtis(DataTablesRequest req) {
-        String query = "SELECT count(id_artis) as banyak FROM artis";
-        if(!req.getExtraParam().isEmpty()){
-            String nama_artis = (String) req.getExtraParam().get("namaArtis");
-            query = " SELECT count(id_artis) as banyak FROM artis where nama_artis like concat('%',?,'%')";
-            return jdbcTemplate.queryForObject(query, Integer.class, nama_artis);
-        }else{
-            return this.jdbcTemplate.queryForObject(query, null, Integer.class);
-        }
-        
-    }
-    
-    public List<Artis> getListArtis(DataTablesRequest req) {
-        String SQL = "SELECT id_artis as idArtis, nama_artis as namaArtis, foto, url_website as urlWebsite, "
-                + "keterangan FROM artis "
-                + "order by "+(req.getSortCol()+1)+"  "+req.getSortDir() +" limit ? offset ?";
-        if(!req.getExtraParam().isEmpty()){
-            String namaArtis = (String) req.getExtraParam().get("namaArtis");
-            SQL = "SELECT id_artis as idArtis, nama_artis as namaArtis, foto, url_website as urlWebsite, "
-                + "keterangan FROM artis "
-                + "where nama_artis like concat('%',?,'%')"
-                + " order by "+(req.getSortCol()+1)+"  "+req.getSortDir() +" limit ? offset ?";
-            return jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(Artis.class), namaArtis, req.getLength(), req.getStart());
-        }else{
-            return jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(Artis.class), req.getLength(), req.getStart());
-        }
-        
-    }
-    
-    //Data Table Genre
-    public Integer getBanyakGenre(DataTablesRequest req) {
-        String query = "SELECT count(id_genre) as banyak FROM genre";
-        if(!req.getExtraParam().isEmpty()){
-            String nama_genre = (String) req.getExtraParam().get("namaGenre");
-            query = " SELECT count(id_genre) as banyak FROM genre where nama_genre like concat('%',?,'%')";
-            return jdbcTemplate.queryForObject(query, Integer.class, nama_genre);
-        }else{
-            return this.jdbcTemplate.queryForObject(query, null, Integer.class);
-        }
-        
-    }
-    
-    public List<Genre> getListGenre(DataTablesRequest req) {
-        String SQL = "SELECT id_genre as idGenre, nama_genre as namaGenre FROM genre "
-                + "order by "+(req.getSortCol()+1)+"  "+req.getSortDir() +" limit ? offset ?";
-        if(!req.getExtraParam().isEmpty()){
-            String namaGenre = (String) req.getExtraParam().get("namaGenre");
-            SQL = "SELECT id_genre as idGenre, nama_genre as namaGenre FROM genre "
-                + "where nama_genre like concat('%',?,'%')"
-                + " order by "+(req.getSortCol()+1)+"  "+req.getSortDir() +" limit ? offset ?";
-            return jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(Genre.class), namaGenre, req.getLength(), req.getStart());
-        }else{
-            return jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(Genre.class), req.getLength(), req.getStart());
-        }
-        
-    }
-    
-    //Data Table Albums
-    public Integer getBanyakAlbums(DataTablesRequest req) {
-        String query = "SELECT count(id_album) as banyak FROM albums";
-        if(!req.getExtraParam().isEmpty()){
-            String nama_albums = (String) req.getExtraParam().get("namaAlbums");
-            query = " SELECT count(id_album) as banyak FROM albums where nama_albums like concat('%',?,'%')";
-            return jdbcTemplate.queryForObject(query, Integer.class, nama_albums);
-        }else{
-            return this.jdbcTemplate.queryForObject(query, null, Integer.class);
-        }
-        
-    }
-    
-    public List<Albums> getListAlbums(DataTablesRequest req) {
-        String SQL = "select al.id_album as idAlbum, al.nama_albums as namaAlbums,\n "
-                    + "al.id_labels as idLabel, al.id_artis as idArtis, al.foto_cover as fotoCover, "
-                    + "al.keterangan, ar.id_artis as idArtis, \n "
-                    + "lab.id_label as idLabel from Albums al join Artis ar on \n "
-                    + "al.id_artis = ar.id_artis join lables_rekaman lab on al.id_labels = lab.id_label "
-                    + "order by "+(req.getSortCol()+1)+"  "+req.getSortDir() +" limit ? offset ?";
-        if(!req.getExtraParam().isEmpty()){
-            String namaAlbums = (String) req.getExtraParam().get("namaAlbums");
-            SQL = "select al.id_album as idAlbum, al.nama_albums as namaAlbums,\n "
-                    + "al.id_labels as idLabel, al.id_artis as idArtis, al.foto_cover as fotoCover, "
-                    + "al.keterangan, ar.id_artis as idArtis, \n "
-                    + "lab.id_label as idLabel from Albums al join Artis ar on \n "
-                    + "al.id_artis = ar.id_artis join lables_rekaman lab on al.id_labels = lab.id_label "
-                    + "where nama_albums like concat('%',?,'%')"
-                    + " order by "+(req.getSortCol()+1)+"  "+req.getSortDir() +" limit ? offset ?";
-            return jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(Albums.class), namaAlbums, req.getLength(), req.getStart());
-        }else{
-            return jdbcTemplate.query(SQL, BeanPropertyRowMapper.newInstance(Albums.class), req.getLength(), req.getStart());
-        }
-        
+    public List<Lagu> getLaguByGenre(int id) {
+
+        String baseQuery = "select la.id_lagu as idLagu, la.judul, la.durasi, la.id_genre as idGenre, "
+                         + "la.id_artis as idArtis, la.id_album as idAlbum, la.file_lagu as fileLagu, "
+                         + "g.nama_genre as namaGenre, ar.nama_artis as namaArtis, al.nama_albums as namaAlbums "
+                         + "from lagu la join genre g on la.id_genre = g.id_genre "
+                         + "join artis ar on la.id_artis = ar.id_artis join albums al on la.id_album = al.id_album  "
+                         + "where la.id_genre = ? ";
+
+        Object[] param = {id};
+
+        return jdbcTemplate.query(baseQuery, param, (rs, rowNUm) -> {
+            Lagu lagu = new Lagu();
+            lagu.setIdLagu(rs.getInt("idLagu"));
+            lagu.setJudul(rs.getString("judul"));
+            lagu.setDurasi(rs.getString("durasi"));
+            lagu.setIdGenre(rs.getInt("idGenre"));
+            lagu.setNamaGenre(rs.getString("namaGenre"));
+            lagu.setIdArtis(rs.getInt("idArtis"));
+            lagu.setNamaArtis(rs.getString("namaArtis"));
+            lagu.setIdAlbum(rs.getInt("idAlbum"));
+            lagu.setNamaAlbums(rs.getString("namaAlbums"));
+            lagu.setFileLagu(rs.getString("fileLagu"));
+            return lagu;
+        });
     }
     
     //Data Table Lagu

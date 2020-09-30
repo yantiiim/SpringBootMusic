@@ -11,6 +11,7 @@ import com.yanti.music.model.DataTablesResponse;
 import com.yanti.music.model.Genre;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -31,4 +32,8 @@ public class GenreService {
             dataTableRespon.setDraw(req.getDraw());
             return dataTableRespon;
         }
+    
+    public void deleteById(Integer id) throws DataAccessException{
+        koneksiJdbc.deleteGenre(id);
+    }
 }
