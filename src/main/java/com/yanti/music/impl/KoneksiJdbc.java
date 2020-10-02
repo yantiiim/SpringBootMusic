@@ -11,6 +11,7 @@ import com.yanti.music.model.DataTablesRequest;
 import com.yanti.music.model.Genre;
 import com.yanti.music.model.LablesRekaman;
 import com.yanti.music.model.Lagu;
+import com.yanti.music.model.UserAdmin;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
@@ -73,6 +74,13 @@ public class KoneksiJdbc {
         }else{
             insertLables(lablesRekaman);
         }
+    }
+    
+    public void deleteLables(Integer id){
+        String SQL = "delete from lables_rekaman where id_label=?";
+        Object parameters[] = {id};
+        
+        jdbcTemplate.update(SQL, parameters);
     }
     
     //Data Table Lables
@@ -510,4 +518,22 @@ public class KoneksiJdbc {
         }
         
     }
+    
+    //Admin
+    public Optional<UserAdmin> getUserAdminById(String userAdmin) {
+        String SQL = "select user_name, user_password from user_admin where user_name = ? ";
+        try {
+            return Optional.of(jdbcTemplate.queryForObject(SQL, (rs, rownum) -> {
+                UserAdmin kab = new UserAdmin();
+                kab.setUsername(rs.getString("user_name"));
+                kab.setPassword(rs.getString("user_password"));
+                return kab;
+            }, userAdmin));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+    
+
 }

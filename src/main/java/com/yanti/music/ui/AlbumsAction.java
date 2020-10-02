@@ -10,12 +10,15 @@ import com.yanti.music.model.Albums;
 import com.yanti.music.model.DataTablesRequest;
 import com.yanti.music.model.DataTablesResponse;
 import com.yanti.music.service.AlbumsService;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -59,6 +62,7 @@ public class AlbumsAction {
             String namaFile = albumsService.save(file);
             
             pesan.put("pesan", "Uploaded the file succesfully: " + namaFile);
+            pesan.put("namaFile",  namaFile);
             return ResponseEntity.status(HttpStatus.OK).body(pesan);
         }catch (Exception e) {
             pesan.put("pesan", "Could not upload the file: " + file.getOriginalFilename() + "!");
@@ -85,5 +89,15 @@ public class AlbumsAction {
     @GetMapping(path = "/api/listalbumsjson/{id}")
     public ResponseEntity<List<Albums>> findByArtis(@PathVariable("id") Integer id){
         return ResponseEntity.ok().body(koneksiJdbc.getAlbumsByArtis(id));
+    }
+    
+    @GetMapping(value = "/api/imagealbums/{id}")
+    public ResponseEntity<InputStreamResource> getImageAlbums(@PathVariable("id") String id) {
+        try {
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(
+                    new InputStreamResource( albumsService.load(id).getInputStream() ));
+        } catch (IOException ex) {
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(null);
+        }
     }
 }
