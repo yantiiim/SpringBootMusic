@@ -9,10 +9,9 @@ package com.yanti.music.model;
  *
  * @author yanti
  */
-public class UserAdmin {
+public class AkunAdmin {
     private String username;
-    private String password;
-    private String token;
+    private String keyword;
 
     public String getUsername() {
         return username;
@@ -22,22 +21,13 @@ public class UserAdmin {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getKeyword() {
+        return keyword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-    
     
     
 }

@@ -5,6 +5,7 @@
  */
 package com.yanti.music.impl;
 
+import com.yanti.music.model.AkunAdmin;
 import com.yanti.music.model.Albums;
 import com.yanti.music.model.Artis;
 import com.yanti.music.model.DataTablesRequest;
@@ -13,6 +14,8 @@ import com.yanti.music.model.LablesRekaman;
 import com.yanti.music.model.Lagu;
 import com.yanti.music.model.UserAdmin;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -520,20 +523,63 @@ public class KoneksiJdbc {
     }
     
     //Admin
-    public Optional<UserAdmin> getUserAdminById(String userAdmin) {
-        String SQL = "select user_name, user_password from user_admin where user_name = ? ";
+//    public Optional<UserAdmin> getUserAdminById(String userAdmin) {
+//        String SQL = "select user_name, user_password from user_admin where user_name = ? ";
+//        try {
+//            return Optional.of(jdbcTemplate.queryForObject(SQL, (rs, rownum) -> {
+//                UserAdmin kab = new UserAdmin();
+//                kab.setUsername(rs.getString("user_name"));
+//                kab.setPassword(rs.getString("user_password"));
+//                return kab;
+//            }, userAdmin));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return Optional.empty();
+//        }
+//    }
+    
+    public Optional<AkunAdmin> getAkunAdminById(String akunAdmin) {
+        String SQL = "select username, keyword from akun_admin where username = ? ";
         try {
             return Optional.of(jdbcTemplate.queryForObject(SQL, (rs, rownum) -> {
-                UserAdmin kab = new UserAdmin();
-                kab.setUsername(rs.getString("user_name"));
-                kab.setPassword(rs.getString("user_password"));
+                AkunAdmin kab = new AkunAdmin();
+                kab.setUsername(rs.getString("username"));
+                kab.setKeyword(rs.getString("keyword"));
                 return kab;
-            }, userAdmin));
+            }, akunAdmin));
         } catch (Exception e) {
             e.printStackTrace();
             return Optional.empty();
         }
     }
     
+    public boolean cekUserAdminValid(UserAdmin userAdmin) {
+        String SQL = "select user_name FROM user_admin where tokenkey = ?";
+        
+        try {
+            Optional<UserAdmin> hasil = Optional.of(jdbcTemplate.queryForObject(SQL, (rs, rownum) -> {
+                UserAdmin kab = new UserAdmin();
+                kab.setUsername(rs.getString("user_name"));
+                return kab;
+            }, userAdmin.getToken()));
+            if(hasil.isPresent()){
+                if(Objects.equals(userAdmin.getUsername(),hasil.get().getToken())){
+                    return true;
+                }else {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public void insertUserAdmin(Map<String, Object> param) {
+        String sql = "insert into user_admin (user_name, tokenkey) values (?,?);";
+        
+        Object parameter[] = {param.get("username"),param.get("token")};
+        jdbcTemplate.update(sql, parameter);
+    }
 
 }
