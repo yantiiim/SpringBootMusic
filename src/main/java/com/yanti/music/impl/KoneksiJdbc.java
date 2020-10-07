@@ -12,6 +12,7 @@ import com.yanti.music.model.DataTablesRequest;
 import com.yanti.music.model.Genre;
 import com.yanti.music.model.LablesRekaman;
 import com.yanti.music.model.Lagu;
+import com.yanti.music.model.StatusLogin;
 import com.yanti.music.model.UserAdmin;
 import java.util.List;
 import java.util.Map;
@@ -553,26 +554,45 @@ public class KoneksiJdbc {
         }
     }
     
-    public boolean cekUserAdminValid(UserAdmin userAdmin) {
-        String SQL = "select user_name FROM user_admin where tokenkey = ?";
-        
+    public StatusLogin cekUserAdminValid(UserAdmin userAdmin) {
+        String baseQuery = "select b.group_id, a.user_name from user_admin a inner join akun_admin b on b.username = a.user_name where tokenkey = ? ";
+        StatusLogin sLogin = new StatusLogin();
         try {
-            Optional<UserAdmin> hasil = Optional.of(jdbcTemplate.queryForObject(SQL, (rs, rownum) -> {
+            boolean isValid = false;
+            Optional<UserAdmin> hasil = Optional.of(jdbcTemplate.queryForObject(baseQuery, (rs, rownum) -> {
                 UserAdmin kab = new UserAdmin();
                 kab.setUsername(rs.getString("user_name"));
+                kab.setGroupId(rs.getInt("group_id"));
                 return kab;
             }, userAdmin.getToken()));
             if(hasil.isPresent()){
-                if(Objects.equals(userAdmin.getUsername(),hasil.get().getToken())){
-                    return true;
-                }else {
-                    return false;
+                if(Objects.equals(userAdmin.getUsername(), hasil.get().getUsername())) {
+                    List<String>rolesName= getRolesById(hasil.get().getGroupId());
+                    sLogin.setIsValid(true);
+                    sLogin.setRoles(rolesName);
+                    sLogin.setToken(userAdmin.getToken());
+                    System.out.println(hasil.get().getGroupId());
+                } else {
+                    sLogin.setIsValid(false);
                 }
             }
         } catch (Exception e) {
+            sLogin.setIsValid(false);
             e.printStackTrace();
         }
-        return false;
+        return sLogin;
+    }
+
+    public List<String> getRolesById(Integer id){
+        String query = "select role_name from roles where role_id = ?";
+
+        Object param[] = {id};
+
+        List<String> prop = jdbcTemplate.query(query, (rs, rownum) ->{
+            return rs.getString("role_name");
+        }, param);
+
+        return prop;
     }
     
     public void insertUserAdmin(Map<String, Object> param) {

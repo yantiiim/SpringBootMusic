@@ -5,6 +5,8 @@
  */
 package com.yanti.music.model;
 
+import java.util.List;
+
 /**
  *
  * @author yanti
@@ -12,6 +14,15 @@ package com.yanti.music.model;
 public class StatusLogin {
     private Boolean isValid;
     private String token;
+    private List<String> roles;
+
+    public List<String> getRoles() {
+        return this.roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
 
     public Boolean getIsValid() {
         return isValid;

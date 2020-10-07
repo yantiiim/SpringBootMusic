@@ -13,6 +13,15 @@ public class UserAdmin {
     private String username;
     private String password;
     private String token;
+    private Integer groupId;
+
+    public Integer getGroupId() {
+        return this.groupId;
+    }
+
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
+    }
 
     public String getUsername() {
         return username;

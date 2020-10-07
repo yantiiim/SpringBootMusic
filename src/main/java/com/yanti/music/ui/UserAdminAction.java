@@ -14,6 +14,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -58,7 +61,7 @@ public class UserAdminAction {
 //    }
     
     @PostMapping("/api/login")
-    public ResponseEntity<StatusLogin> login(@RequestBody UserAdmin userAdmin) throws Exception {
+    public ResponseEntity<StatusLogin> login(@RequestBody UserAdmin userAdmin, HttpServletRequest request) throws Exception {
         StatusLogin statusLogin = new StatusLogin();
         if (userAdmin != null) {
             String username = userAdmin.getUsername();
@@ -72,6 +75,7 @@ public class UserAdminAction {
                     paramlogin.put("username", username);
                     paramlogin.put("token", token);
                     koneksiJdbc.insertUserAdmin(paramlogin);
+                    statusLogin.setToken(token);
                 } else {
                     statusLogin.setIsValid(false);
                     statusLogin.setToken(null);
@@ -85,7 +89,8 @@ public class UserAdminAction {
     }
     
     @PostMapping("/api/ceklogin")
-    public ResponseEntity<Boolean> cekUserAdminValid(@RequestBody UserAdmin userAdmin) {
+    public ResponseEntity<StatusLogin> cekUserAdminValid(@RequestBody UserAdmin userAdmin) {
+        System.out.println(userAdmin.getUsername());
         return ResponseEntity.ok().body(koneksiJdbc.cekUserAdminValid(userAdmin));
     }
 }

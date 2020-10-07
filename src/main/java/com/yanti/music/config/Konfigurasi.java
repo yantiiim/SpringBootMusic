@@ -22,7 +22,7 @@ public class Konfigurasi {
     public DataSource getDataSource(){
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://tabeldata.ip-dynamic.com:5432/music_albums?serverTimezone=UTC");
+        dataSource.setUrl("jdbc:postgresql://tabeldata.ip-dynamic.com:5432/music_albums?loggerLevel=DEBUG?serverTimezone=UTC");
         dataSource.setUsername("userkelas");
         dataSource.setPassword("123456");
         
