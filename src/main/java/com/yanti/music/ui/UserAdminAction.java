@@ -32,34 +32,6 @@ public class UserAdminAction {
     @Autowired
     private KoneksiJdbc koneksiJdbc;
     
-//    @PostMapping("/api/login")
-//    public ResponseEntity<StatusLogin> login(@RequestBody UserAdmin userAdmin) throws Exception {
-//        System.out.println("masuk");
-//        StatusLogin statusLogin = new StatusLogin();
-//        if (userAdmin != null) {
-//            String username = userAdmin.getUsername();
-//           Optional<UserAdmin>useradmindb = koneksiJdbc.getUserAdminById(username);
-//            if (useradmindb.isPresent() && Objects.equals(username, useradmindb.get().getUsername())) {
-//                String password = userAdmin.getPassword();
-//                if (Objects.equals(password,useradmindb.get().getPassword())) {
-//                    System.out.println(useradmindb.get().getUsername());
-//                    statusLogin.setIsValid(true);
-//                    String token =UUID.randomUUID().toString();
-//                    Map<String, Object> paramlogin = new HashMap<>();
-//                    paramlogin.put("username", username);
-//                    paramlogin.put("token", token);
-//                } else {
-//                    statusLogin.setIsValid(false);
-//                    statusLogin.setToken(null);
-//                }
-//            }
-//        } else {
-//            statusLogin.setIsValid(false);
-//            statusLogin.setToken(null);
-//        }
-//        return ResponseEntity.ok().body(statusLogin);
-//    }
-    
     @PostMapping("/api/login")
     public ResponseEntity<StatusLogin> login(@RequestBody UserAdmin userAdmin, HttpServletRequest request) throws Exception {
         StatusLogin statusLogin = new StatusLogin();

@@ -10,8 +10,17 @@ package com.yanti.music.model;
  * @author yanti
  */
 public class AkunAdmin {
+    private String id;
     private String username;
     private String keyword;
+
+    public String getId() {
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;
