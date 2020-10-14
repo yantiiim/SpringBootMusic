@@ -5,7 +5,7 @@
  */
 package com.yanti.music.service;
 
-import com.yanti.music.impl.KoneksiJdbc;
+import com.yanti.music.impl.JdbcGenre;
 import com.yanti.music.model.DataTablesRequest;
 import com.yanti.music.model.DataTablesResponse;
 import com.yanti.music.model.Genre;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class GenreService {
     @Autowired
-    private KoneksiJdbc koneksiJdbc;
+    private JdbcGenre koneksiJdbc;
     
     public DataTablesResponse<Genre> listGenreDataTable(DataTablesRequest req) {
             DataTablesResponse dataTableRespon  = new DataTablesResponse();

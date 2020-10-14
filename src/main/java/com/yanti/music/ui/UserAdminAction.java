@@ -5,7 +5,7 @@
  */
 package com.yanti.music.ui;
 
-import com.yanti.music.impl.KoneksiJdbc;
+import com.yanti.music.impl.JdbcLogin;
 import com.yanti.music.model.AkunAdmin;
 import com.yanti.music.model.StatusLogin;
 import com.yanti.music.model.UserAdmin;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Controller
 public class UserAdminAction {
     @Autowired
-    private KoneksiJdbc koneksiJdbc;
+    private JdbcLogin koneksiJdbc;
     
     @PostMapping("/api/login")
     public ResponseEntity<StatusLogin> login(@RequestBody UserAdmin userAdmin, HttpServletRequest request) throws Exception {

@@ -5,7 +5,7 @@
  */
 package com.yanti.music.service;
 
-import com.yanti.music.impl.KoneksiJdbc;
+import com.yanti.music.impl.JdbcArtis;
 import com.yanti.music.model.Artis;
 import com.yanti.music.model.DataTablesRequest;
 import com.yanti.music.model.DataTablesResponse;
@@ -30,7 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class ArtisService {
     @Autowired
-    private KoneksiJdbc koneksiJdbc;
+    private JdbcArtis koneksiJdbc;
     
     @Value("${upload.artis}")
     private String pathFile;

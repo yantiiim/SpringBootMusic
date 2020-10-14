@@ -5,7 +5,7 @@
  */
 package com.yanti.music.ui;
 
-import com.yanti.music.impl.KoneksiJdbc;
+import com.yanti.music.impl.JdbcGenre;
 import com.yanti.music.model.DataTablesRequest;
 import com.yanti.music.model.DataTablesResponse;
 import com.yanti.music.model.Genre;
@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Controller
 public class GenreAction {
     @Autowired
-    private KoneksiJdbc koneksiJdbc;
+    private JdbcGenre koneksiJdbc;
     
     @Autowired
     private GenreService genreService;

@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.yanti.music.dto.AkunAdminDto;
-import com.yanti.music.impl.KoneksiJdbc;
+import com.yanti.music.impl.JdbcAkunAdmin;
 import com.yanti.music.model.AkunAdmin;
 import com.yanti.music.model.DataTablesRequest;
 import com.yanti.music.model.DataTablesResponse;
@@ -28,7 +28,8 @@ public class AkunAdminAction {
     @Autowired
     private AkunAdminService akunAdminService;
 
-    @Autowired KoneksiJdbc koneksiJdbc;
+    @Autowired 
+    private JdbcAkunAdmin koneksiJdbc;
 
     @PostMapping("/api/registerakun")
     public ResponseEntity <?> registerAkun(@RequestBody AkunAdminDto.New akunAdminDto) throws SQLException{

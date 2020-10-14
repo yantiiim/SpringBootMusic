@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.yanti.music.dto.AkunAdminDto;
-import com.yanti.music.impl.KoneksiJdbc;
+import com.yanti.music.impl.JdbcAkunAdmin;
 import com.yanti.music.model.AkunAdmin;
 import com.yanti.music.model.DataTablesRequest;
 import com.yanti.music.model.DataTablesResponse;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class AkunAdminService {
     
     @Autowired
-    private KoneksiJdbc koneksiJdbc;
+    private JdbcAkunAdmin koneksiJdbc;
 
     public void saveAdmin(AkunAdminDto.New akunAdminDto) throws SQLException {
         akunAdminDto.setId(UUID.randomUUID().toString());

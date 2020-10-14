@@ -5,17 +5,21 @@
  */
 package com.yanti.music.ui;
 
-import com.yanti.music.impl.KoneksiJdbc;
+import com.yanti.music.impl.JdbcLagu;
 import com.yanti.music.model.DataTablesRequest;
 import com.yanti.music.model.DataTablesResponse;
 import com.yanti.music.model.Lagu;
 import com.yanti.music.service.LaguService;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,7 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 public class LaguAction {
     @Autowired
-    private KoneksiJdbc koneksiJdbc;
+    private JdbcLagu koneksiJdbc;
     
     @Autowired
     private LaguService laguService;
@@ -90,5 +94,15 @@ public class LaguAction {
     @GetMapping(path = "/api/listlagubygenrejson/{idg}")
     public ResponseEntity<List<Lagu>> findByGenre(@PathVariable("idg") Integer id){
         return ResponseEntity.ok().body(koneksiJdbc.getLaguByGenre(id));
+    }
+
+    @GetMapping(value = "/api/music/{id}")
+    public ResponseEntity<InputStreamResource>getMusic(@PathVariable("id") String id){
+        try{
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(
+                    new InputStreamResource( laguService.load(id).getInputStream() ));
+        }catch(IOException ex){
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(null);
+        }
     }
 }

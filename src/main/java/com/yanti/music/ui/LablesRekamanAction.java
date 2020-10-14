@@ -5,7 +5,7 @@
  */
 package com.yanti.music.ui;
 
-import com.yanti.music.impl.KoneksiJdbc;
+import com.yanti.music.impl.JdbcLables;
 import com.yanti.music.model.DataTablesRequest;
 import com.yanti.music.model.DataTablesResponse;
 import com.yanti.music.model.LablesRekaman;
@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Controller
 public class LablesRekamanAction {
     @Autowired
-    private KoneksiJdbc koneksiJdbc;
+    private JdbcLables koneksiJdbc;
     
     @Autowired
     private LablesRekamanService lablesRekamanService;
