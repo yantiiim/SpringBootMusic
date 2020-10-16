@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import com.yanti.music.dto.AkunAdminDto;
 import com.yanti.music.impl.JdbcAkunAdmin;
@@ -53,13 +52,8 @@ public class AkunAdminAction {
     }
 
     @GetMapping(path="/api/listakunjson/{id}")
-    public ResponseEntity<AkunAdmin> listAkunByIdJson(@PathVariable("id") int id ){
-        Optional<AkunAdmin> hasil = koneksiJdbc.getAkunById(id);
-        if(hasil.isPresent()){
-            return ResponseEntity.ok().body(hasil.get());
-        }else{
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+    public ResponseEntity<List<AkunAdmin>> listAkunByIdJson(@PathVariable("id") String id ){
+        return ResponseEntity.ok().body(koneksiJdbc.getAkunById(id));
     }
 
     @PostMapping(path="/api/listakundatajson")

@@ -15,6 +15,7 @@ import com.yanti.music.model.AkunAdmin;
 import com.yanti.music.model.DataTablesRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -31,6 +32,12 @@ public class JdbcAkunAdmin {
     //Akun Admin
 
     public void registerAkun(AkunAdminDto.New akunAdminDto) throws SQLException {
+        String sql = "insert into akun_admin (id,username,keyword) values (?,?,?)";
+        Object param[] = {akunAdminDto.getId(), akunAdminDto.getKeyword(), akunAdminDto.getKeyword()};
+        jdbcTemplate.update(sql, param);
+    }
+
+    public void registerAdmin(AkunAdminDto.New akunAdminDto) throws SQLException {
         String sql = "insert into akun_admin (id,username,keyword) values (?,?,?)";
         Object param[] = {akunAdminDto.getId(), akunAdminDto.getKeyword(), akunAdminDto.getKeyword()};
         jdbcTemplate.update(sql, param);
@@ -118,14 +125,16 @@ public class JdbcAkunAdmin {
         return prop;
     }
 
-    public Optional<AkunAdmin> getAkunById(int id){
-        String SQL = "SELECT id,username FROM akun_admin where id = ?";
-        Object param[] = {id};
-        try {
-            return Optional.of (jdbcTemplate.queryForObject(SQL, param, BeanPropertyRowMapper.newInstance(AkunAdmin.class)));
-        }catch (Exception e) {
-            return Optional.empty();
-        }
+    public List<AkunAdmin> getAkunById(String id) throws EmptyResultDataAccessException {
+        String baseQuery = "select id as id, username as username from akun_admin where id = ?";
+        Object[] param = {id};
+
+        return jdbcTemplate.query(baseQuery, param,  (rs, rowNUm) -> {
+            AkunAdmin akunAdmin = new AkunAdmin();
+            akunAdmin.setUsername(rs.getString("username"));
+            akunAdmin.setId(rs.getString("id"));
+            return akunAdmin;
+        });
     }
 
     public List<AkunAdmin> getListAkun(DataTablesRequest req) {

@@ -27,7 +27,7 @@ public class AkunAdminService {
         paramRegAcc.put("idUser", akunAdminDto.getId());
         paramRegAcc.put("idGroup", 2);
         koneksiJdbc.insertGroupUser(paramRegAcc);
-        koneksiJdbc.registerAkun(akunAdminDto);
+        koneksiJdbc.registerAdmin(akunAdminDto);
     }
 
     public void saveUser(AkunAdminDto.New akunAdminDto) throws SQLException {
